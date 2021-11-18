@@ -1,0 +1,31 @@
+use_frameworks!
+platform:ios, '10.0'
+
+source 'https://github.com/CocoaPods/Specs.git' #官方库
+
+flutter_project_path = 'https://github.com/liyunxin/DYFlutterm.git'
+flutter_application_path = './DYFlutterm'
+
+installing_pods = ARGV.include?('install') || ARGV.include?('update')
+if installing_pods
+  if !File.exist?(flutter_application_path)
+    system "git clone #{flutter_project_path}"
+    Dir.chdir(flutter_application_path)
+    system 'git checkout master'
+    Dir.chdir('../')
+  end
+  Dir.chdir(flutter_application_path)
+  system 'git fetch'
+  #system 'git checkout 0.0.2'
+  #system 'git pull'
+  system 'flutter pub get'
+  Dir.chdir('../')
+end
+
+load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+
+target 'DYFlutterDemo' do
+   use_frameworks!
+   install_all_flutter_pods(flutter_application_path)
+   pod 'MJRefresh'
+end
